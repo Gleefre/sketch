@@ -54,6 +54,7 @@
 
            ;; Utils
            :relative-path
+           :define-start-function
 
            ;; Colors
            :color

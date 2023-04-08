@@ -15,6 +15,7 @@
            `(defmethod ,name :before ((,@arg ,sketch)
                                       ,@(if allow-other-keys
                                             '(&key &allow-other-keys)))
+              (declare (ignorable ,@arg))
               ,@body)))
     `(progn
        ,(apply #'define-method 'sketch:setup t (cdr (assoc :setup setup-and-on-close)))

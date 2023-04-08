@@ -16,17 +16,19 @@
                                       ,@(if allow-other-keys
                                             '(&key &allow-other-keys)))
               (declare (ignorable ,@arg))
-              ,@body)))
+              ,@body))
+         (make-sketch-call ()
+           `(apply #'make-instance ',sketch (append initargs ',args))))
     `(progn
        ,(apply #'define-method 'sketch:setup t (cdr (assoc :setup setup-and-on-close)))
        ,(apply #'define-method 'kit.sdl2:close-window nil (cdr (assoc :on-close setup-and-on-close)))
-       (defun ,name (&optional live)
+       (defun ,name (&optional live &rest initargs &key &allow-other-keys)
          (if live
-             (make-instance ',sketch ,@args)
+             ,(make-sketch-call)
              (sdl2:make-this-thread-main
               (lambda ()
                 (let ((*build* t))
-                  (make-instance ',sketch ,@args)))))))))
+                  ,(make-sketch-call)))))))))
 
 (defun pad-list (list pad length)
   (let ((pad-length (- length (length list))))

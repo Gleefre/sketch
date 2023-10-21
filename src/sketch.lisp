@@ -131,22 +131,23 @@ used for drawing, 60fps.")
       (sdl2:gl-set-attr :context-minor-version 3)
       (sdl2:gl-set-attr :context-profile-mask 1))))
 
-(defmethod initialize-instance :after ((instance sketch) &rest initargs &key &allow-other-keys)
+(defmethod initialize-instance :after ((instance sketch) &rest initargs &key no-window &allow-other-keys)
   (initialize-sketch)
   (apply #'prepare instance initargs)
-  (setf (slot-value instance '%window)
-        (apply #'make-instance 'sketch-window
-               :sketch instance
-               :title (sketch-title instance)
-               :w (sketch-width instance)
-               :h (sketch-height instance)
-               :resizable (sketch-resizable instance)
-               :fullscreen (sketch-fullscreen instance)
-               (remove-from-plist-if (lambda (key)
-                                       (not (member key '(:x :y :shown :flags))))
-                                     initargs)))
-  (kit.sdl2:start)
-  (setf (kit.sdl2:idle-render (slot-value instance '%window)) t))
+  (unless no-window
+    (setf (slot-value instance '%window)
+          (apply #'make-instance 'sketch-window
+                 :sketch instance
+                 :title (sketch-title instance)
+                 :w (sketch-width instance)
+                 :h (sketch-height instance)
+                 :resizable (sketch-resizable instance)
+                 :fullscreen (sketch-fullscreen instance)
+                 (remove-from-plist-if (lambda (key)
+                                         (not (member key '(:x :y :shown :flags))))
+                                       initargs)))
+    (kit.sdl2:start)
+    (setf (kit.sdl2:idle-render (slot-value instance '%window)) t)))
 
 (defmethod update-instance-for-redefined-class :after
     ((instance sketch) added-slots discarded-slots property-list &rest initargs)

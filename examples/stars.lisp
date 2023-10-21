@@ -10,9 +10,10 @@
 
 (defsketch stars
     ((bw nil)
-     (stars (loop :for i :below 10 :collect (make-stars bw)))
+     (stars nil)
      (positions (loop :for i :from 18 :downto 0 :by 2 :collect i))
      (rotations (loop :repeat 10 :collect (cons 0 (- (random 0.2) 0.05)))))
+  (unless stars (setf stars (loop :for i :below 10 :collect (make-stars bw))))
   (background +black+)
   (dotimes (i (length stars))
     (incf (elt positions i) 0.03)

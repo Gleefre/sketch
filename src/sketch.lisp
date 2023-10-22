@@ -132,9 +132,9 @@ used for drawing, 60fps.")
       (sdl2:gl-set-attr :context-profile-mask 1))))
 
 (defmethod initialize-instance :after ((instance sketch) &rest initargs &key no-window &allow-other-keys)
-  (initialize-sketch)
   (apply #'prepare instance initargs)
   (unless no-window
+    (initialize-sketch)
     (setf (slot-value instance '%window)
           (apply #'make-instance 'sketch-window
                  :sketch instance

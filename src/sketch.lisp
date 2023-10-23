@@ -182,30 +182,28 @@ used for drawing, 60fps.")
 
 (defun render (instance)
   (with-slots (%env %restart width height copy-pixels) instance
-    (unless (env-initialized-p %env)
-      (initialize-environment instance)
-      (initialize-gl instance))
-    (with-environment %env
-      (with-pen (make-default-pen)
-        (with-font (make-default-font)
-          (with-identity-matrix
-            (unless copy-pixels
-              (background (gray 0.4)))
-            ;; Restart sketch on setup and when recovering from an error.
-            (when %restart
-              (gl-catch (rgb 1 1 0.3)
-                (setup instance))
-              (setf (slot-value instance '%restart) nil))
-            ;; If we're in the debug mode, we exit from it immediately,
-            ;; so that the restarts are shown only once. Afterwards, we
-            ;; continue presenting the user with the red screen, waiting for
-            ;; the error to be fixed, or for the debug key to be pressed again.
-            (if (debug-mode-p)
-                (progn
-                  (exit-debug-mode)
-                  (draw-window instance))
-                (gl-catch (rgb 0.7 0 0)
-                  (draw-window instance)))))))))
+    (when (env-initialized-p %env)
+      (with-environment %env
+        (with-pen (make-default-pen)
+          (with-font (make-default-font)
+            (with-identity-matrix
+              (unless copy-pixels
+                (background (gray 0.4)))
+              ;; Restart sketch on setup and when recovering from an error.
+              (when %restart
+                (gl-catch (rgb 1 1 0.3)
+                  (setup instance))
+                (setf (slot-value instance '%restart) nil))
+              ;; If we're in the debug mode, we exit from it immediately,
+              ;; so that the restarts are shown only once. Afterwards, we
+              ;; continue presenting the user with the red screen, waiting for
+              ;; the error to be fixed, or for the debug key to be pressed again.
+              (if (debug-mode-p)
+                  (progn
+                    (exit-debug-mode)
+                    (draw-window instance))
+                  (gl-catch (rgb 0.7 0 0)
+                    (draw-window instance))))))))))
 
 ;;; Support for resizable windows
 

@@ -5,7 +5,8 @@
   :author "Danilo Vidovic (vydd)"
   :license "MIT"
   :depends-on (#:alexandria
-               #:sketch)
+               #:sketch
+               #:sketch-utils)
   :pathname "examples"
   :serial t
   :components ((:file "package")

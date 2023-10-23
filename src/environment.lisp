@@ -66,7 +66,8 @@
         (warn "VSYNC was not enabled; frame rate was not restricted to 60fps.~%  ~A" e)
         (sdl2-ffi.functions:sdl-clear-error)))
     (gl:viewport 0 0 width height)
-    ;(gl:enable :blend :line-smooth :polygon-smooth)
+    (gl:enable :blend :line-smooth ;:polygon-smooth
+               )
     (gl:blend-func :src-alpha :one-minus-src-alpha)
     (gl:hint :line-smooth-hint :nicest)
     (gl:hint :polygon-smooth-hint :nicest)

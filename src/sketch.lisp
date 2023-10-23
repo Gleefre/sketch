@@ -68,6 +68,9 @@
   (define-forward kit.sdl2:controller-button-event (controller state timestamp button))
   (define-forward kit.sdl2:other-event (event)))
 
+(defmethod kit.sdl2:window-event ((sketch sketch) (type (eql :close)) ts d1 d2)
+  (close-sketch sketch))
+
 ;;; Non trivial sketch writers
 
 (defmacro define-sketch-writer (slot &body body)

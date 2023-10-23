@@ -146,6 +146,8 @@ used for drawing, 60fps.")
                  (remove-from-plist-if (lambda (key)
                                          (not (member key '(:x :y :shown :flags))))
                                        initargs)))
+    (initialize-environment instance)
+    (initialize-gl instance)
     (kit.sdl2:start)
     (setf (kit.sdl2:idle-render (slot-value instance '%window)) t)))
 

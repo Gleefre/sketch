@@ -181,10 +181,10 @@ used for drawing, 60fps.")
   (end-draw))
 
 (defmethod kit.sdl2:render ((instance sketch))
-  (kit.sdl2:render (slot-value instance '%window)))
+  (render instance))
 
 (defmethod kit.sdl2:render ((window sketch-window))
-  (render (slot-value window '%sketch)))
+  (kit.sdl2:render (slot-value window '%sketch)))
 
 (defun render (instance)
   (with-slots (%env %restart width height copy-pixels) instance

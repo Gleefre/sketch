@@ -156,6 +156,7 @@
            :image-width
            :image-height
            :crop
+           :colored-image
            :with-uv-rect
            :save-png
 

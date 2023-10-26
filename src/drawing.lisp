@@ -44,10 +44,14 @@
   (typecase res
     (color (values (or (color-vector-255 res) (env-white-color-vector *env*))
                    (env-white-pixel-texture *env*)))
-    (cropped-image (values (env-white-color-vector *env*)
+    (cropped-image (values (or (alexandria:when-let ((color (image-color res)))
+                                 (color-vector-255 color))
+                               (env-white-color-vector *env*))
                            (or (image-texture res) (env-white-pixel-texture *env*))
                            (cropped-image-uv-rect res)))
-    (image (values (env-white-color-vector *env*)
+    (image (values (or (alexandria:when-let ((color (image-color res)))
+                         (color-vector-255 color))
+                       (env-white-color-vector *env*))
                    (or (image-texture res) (env-white-pixel-texture *env*))))))
 
 (defun draw-shape (primitive fill-vertices stroke-vertices)

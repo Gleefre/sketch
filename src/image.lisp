@@ -22,6 +22,9 @@
    to the rect of X,Y,W,H, which are all in pixel values."
   (cropped-image-from-image image-resource x y w h))
 
+(defmethod colored-image ((image-resource image) color)
+  (colored-image-from-image image-resource color))
+
 (defun save-png (pathname)
   (let ((width (sketch-width *sketch*))
         (height (sketch-height *sketch*)))

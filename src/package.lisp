@@ -148,6 +148,7 @@
            :load-resource
            :image
            :crop
+           :colored-image
            :with-uv-rect
            :save-png
 

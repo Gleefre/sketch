@@ -14,6 +14,7 @@
 
 (defclass image (resource)
   ((texture :accessor image-texture :initarg :texture)
+   (color :accessor image-color :initarg :color :initform nil)
    (width :accessor image-width :initarg :width)
    (height :accessor image-height :initarg :height)))
 
@@ -36,6 +37,21 @@
                  :width w
                  :height h
                  :uv-rect (pixel-uv-rect image x y w h)))
+
+(defun colored-image-from-image (image color)
+  (typecase image
+    (cropped-image (make-instance 'cropped-image
+                                  :texture (image-texture image)
+                                  :width (image-width image)
+                                  :height (image-height image)
+                                  :uv-rect (cropped-image-uv-rect image)
+                                  :color color))
+    (image (make-instance 'image
+                          :texture (image-texture image)
+                          :width (image-width image)
+                          :height (image-height image)
+                          :color color))
+    (t image)))
 
 (defclass typeface (resource)
   ((filename :accessor typeface-filename :initarg :filename)

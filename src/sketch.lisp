@@ -153,7 +153,8 @@ used for drawing, 60fps.")
       (initialize-environment instance)
       (initialize-gl instance))
     (kit.sdl2:start)
-    (setf (kit.sdl2:idle-render (slot-value instance '%window)) t)))
+    (setf (kit.sdl2:idle-render (slot-value instance '%window)) t)
+    (sdl2:push-event :userevent)))
 
 (defmethod update-instance-for-redefined-class :after
     ((instance sketch) added-slots discarded-slots property-list &rest initargs)

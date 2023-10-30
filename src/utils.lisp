@@ -41,7 +41,7 @@ Possible options:
          ,(alexandria:when-let (arg-and-body (cdr (assoc :setup options)))
             (apply #'define-method 'sketch:setup t arg-and-body))
          ,(alexandria:when-let (arg-and-body (cdr (assoc :on-close options)))
-            (apply #'define-method 'kit.sdl2:close-window nil arg-and-body))
+            (apply #'define-method 'sketch::close-sketch nil arg-and-body))
          (defun ,name (&rest ,initargs-name &key &allow-other-keys)
            (initialize-sketch)
            ,@(cdr (assoc :start options))

@@ -27,11 +27,13 @@
                  collect `(var ,var)
                  collect value)))
 
-(defun add-hook (name function)
-  (pushnew function (var-hooks name)))
+(defun add-hook (names function)
+  (loop for name in (alexandria:ensure-list names)
+        do (pushnew function (var-hooks name))))
 
-(defun remove-hook (name function)
-  (alexandria:removef (var-hooks name) function))
+(defun remove-hook (names function)
+  (loop for name in (alexandria:ensure-list names)
+        do (alexandria:removef (var-hooks name) function)))
 
 (defmacro define-hook (name (&rest vars) &body body)
   (unless name

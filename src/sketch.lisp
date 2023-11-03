@@ -204,23 +204,27 @@ used for drawing, 60fps.")
    (defaultp :initarg :defaultp :accessor binding-defaultp)
    (initarg :initarg :initarg :accessor binding-initarg)
    (accessor :initarg :accessor :accessor binding-accessor)
-   (channelp :initarg :channelp :accessor binding-channelp)
-   (channel-name :initarg :channel-name :accessor binding-channel-name)))
+   (hookp :initarg :hookp :accessor binding-hookp)
+   (hook-name :initarg :hook-name :accessor binding-hook-name)
+   (hook-vars :initarg :hook-vars :accessor binding-hook-vars)))
 
 (defun make-binding (name &key (sketch-name 'sketch)
                                (defaultp nil)
                                (initform nil)
                                (initarg (alexandria:make-keyword name))
                                (accessor (alexandria:symbolicate sketch-name '#:- name))
-                               (channel-name nil channel-name-p))
+                               (hook-vars nil hook-vars-p)
+                               (hook-name (when hook-vars-p
+                                            (alexandria:symbolicate sketch-name '#:- name '#:-hook))))
   (make-instance 'binding :name name
                           :sketch-name sketch-name
                           :defaultp defaultp
                           :initform initform
                           :initarg initarg
                           :accessor accessor
-                          :channel-name channel-name
-                          :channelp channel-name-p))
+                          :hook-vars hook-vars
+                          :hookp hook-vars-p
+                          :hook-name hook-name))
 
 (defun add-default-bindings (parsed-bindings)
   (loop for (name . args) in (reverse *default-slots*)
@@ -232,13 +236,13 @@ used for drawing, 60fps.")
   (add-default-bindings
    (loop for (name value . args) in (alexandria:ensure-list bindings)
          for default-slot-p = (assoc name *default-slots*)
-         ;; If a VALUE is of form (IN CHANNEL-NAME DEFAULT-VALUE) it
-         ;; is recognized as a channel. We should pass additional
-         ;; :channel-name parameter to MAKE-BINDING and set the VALUE
-         ;; to the DEFAULT-VALUE.
+         ;; If a VALUE is of form (VAR VAR-NAME DEFAULT-VALUE) it is
+         ;; recognized as a variable in sketch's environment. We
+         ;; should pass additional :hook-vars parameter to
+         ;; MAKE-BINDING and set the VALUE to the DEFAULT-VALUE.
          when (and (consp value)
-                   (eq 'in (car value)))
-           do (setf args (list* :channel-name (second value) args)
+                   (eq 'var (car value)))
+           do (setf args (list* :hook-vars (list (second value)) args)
                     value (third value))
          collect (apply #'make-binding
                         name

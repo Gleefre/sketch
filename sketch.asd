@@ -24,6 +24,7 @@
   :components ((:file "package")
                (:file "math")
                (:file "utils")
+               (:file "vars-and-hooks")
                (:file "environment")
                (:file "resources")
                (:file "color")

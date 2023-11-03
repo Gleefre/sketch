@@ -34,6 +34,8 @@
   (alexandria:removef (var-hooks name) function))
 
 (defmacro define-hook (name (&rest vars) &body body)
+  (unless name
+    (setf name (gensym)))
   `(progn
      (defun ,name () ,@body)
      ,@(loop for var in vars

@@ -111,6 +111,8 @@ used for drawing, 60fps.")
 
 (defmethod initialize-instance :after ((instance sketch) &rest initargs &key &allow-other-keys)
   (initialize-environment instance)
+  (with-environment (slot-value instance '%env)
+    (set-var :sketch instance))
   (apply #'prepare instance initargs)
   (initialize-gl instance))
 

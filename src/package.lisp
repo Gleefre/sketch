@@ -140,6 +140,12 @@
            :define-named-channel-observer
            :reset-all-channels
 
+           ;; Vars and hooks
+           :var
+           :add-hook
+           :remove-hook
+           :define-hook
+
            ;; Figures
            :deffigure
 

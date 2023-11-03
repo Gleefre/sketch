@@ -142,6 +142,7 @@
 
            ;; Vars and hooks
            :var
+           :set-var
            :add-hook
            :remove-hook
            :define-hook

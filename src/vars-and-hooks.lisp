@@ -22,6 +22,11 @@
   (prog1 (setf (symbol-var name) value)
     (mapcar #'funcall (var-hooks name))))
 
+(defmacro set-var (&rest var-value)
+  `(setf ,@(loop for (var value) on var-value by #'cddr
+                 collect `(var ,var)
+                 collect value)))
+
 (defun add-hook (name function)
   (pushnew function (var-hooks name)))
 

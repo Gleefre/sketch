@@ -253,17 +253,21 @@ used for drawing, 60fps.")
                             (cdddr default-slot-p)
                             (list* :sketch-name sketch-name args))))))
 
-;;; DEFSKETCH channels
+;;; DEFSKETCH hooks
 
-(defun define-channel-observers (bindings)
-  (loop for b in bindings
-        when (binding-channelp b)
-        collect `(define-channel-observer
-                   (let ((win (kit.sdl2:last-window)))
-                     (when win
-                       (setf (,(binding-accessor b) win)
-                             (in ,(binding-channel-name b)
-                                 ,(binding-initform b))))))))
+(defun define-sketch-hooks (sketch-name bindings)
+  `(progn
+     ,@(loop for b in bindings
+             when (binding-hookp b)
+             collect `(defun ,(binding-hook-name b) ()
+                        (setf (,(binding-accessor b) (var :sketch))
+                              (var ,(binding-hook-name b)))))
+     (defmethod initialize-instance :after ((sketch ,sketch-name) &key &allow-other-keys)
+       (with-environment (slot-value sketch '%env)
+         ,@(loop for b in bindings
+                 when (binding-hookp b)
+                 collect `(add-hook '(,@(binding-hook-vars b))
+                                    ',(binding-hook-name b)))))))
 
 ;;; DEFSKETCH macro
 
@@ -298,7 +302,7 @@ used for drawing, 60fps.")
   (let ((bindings (parse-bindings sketch-name bindings)))
     `(progn
        ,(define-sketch-defclass sketch-name bindings)
-       ,@(define-channel-observers bindings)
+       ,(define-sketch-hooks sketch-name bindings)
        ,(define-prepare-method sketch-name bindings)
        ,(define-draw-method sketch-name bindings body)
 

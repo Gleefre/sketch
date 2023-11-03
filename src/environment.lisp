@@ -27,7 +27,10 @@
   (resources (make-hash-table))
   ;; Debugging
   (debug-key-pressed nil)
-  (red-screen nil))
+  (red-screen nil)
+  ;; Variables with hooks
+  (vars (alexandria:copy-hash-table *vars*))
+  (hooks (alexandria:copy-hash-table *hooks*)))
 
 (defparameter *env* nil)
 
@@ -82,5 +85,7 @@
         (env-debug-key-pressed *env*) nil))
 
 (defmacro with-environment (env &body body)
-  `(let ((*env* ,env))
+  `(let* ((*env* ,env)
+          (*vars* (env-vars *env*))
+          (*hooks* (env-hooks *env*)))
      ,@body))

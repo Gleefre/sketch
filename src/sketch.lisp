@@ -207,26 +207,33 @@ used for drawing, 60fps.")
    (initarg :initarg :initarg :accessor binding-initarg)
    (accessor :initarg :accessor :accessor binding-accessor)
    (hookp :initarg :hookp :accessor binding-hookp)
+   (hook-var :initarg :hook-var :accessor binding-hook-var)
+   (hook-vars :initarg :hook-vars :accessor binding-hook-vars)
    (hook-name :initarg :hook-name :accessor binding-hook-name)
-   (hook-vars :initarg :hook-vars :accessor binding-hook-vars)))
+   (var-hook-name :initarg :var-hook-name :accessor binding-var-hook-name)))
 
 (defun make-binding (name &key (sketch-name 'sketch)
                                (defaultp nil)
                                (initform nil)
                                (initarg (alexandria:make-keyword name))
                                (accessor (alexandria:symbolicate sketch-name '#:- name))
+                               (hook-var nil hook-var-p)
                                (hook-vars nil hook-vars-p)
-                               (hook-name (when hook-vars-p
-                                            (alexandria:symbolicate sketch-name '#:- name '#:-hook))))
+                               (hook-name (when hook-var-p
+                                            (alexandria:symbolicate sketch-name '#:- name '#:-hook)))
+                               (var-hook-name (when hook-vars-p
+                                                (alexandria:symbolicate sketch-name '#:- name '#:-var-hook))))
   (make-instance 'binding :name name
                           :sketch-name sketch-name
                           :defaultp defaultp
                           :initform initform
                           :initarg initarg
                           :accessor accessor
+                          :hookp hook-var-p
+                          :hook-var hook-var
                           :hook-vars hook-vars
-                          :hookp hook-vars-p
-                          :hook-name hook-name))
+                          :hook-name hook-name
+                          :var-hook-name var-hook-name))
 
 (defun add-default-bindings (parsed-bindings)
   (loop for (name . args) in (reverse *default-slots*)
@@ -244,7 +251,7 @@ used for drawing, 60fps.")
          ;; MAKE-BINDING and set the VALUE to the DEFAULT-VALUE.
          when (and (consp value)
                    (eq 'var (car value)))
-           do (setf args (list* :hook-vars (list (second value)) args)
+           do (setf args (list* :hook-var (second value) args)
                     value (third value))
          collect (apply #'make-binding
                         name
@@ -259,15 +266,24 @@ used for drawing, 60fps.")
   `(progn
      ,@(loop for b in bindings
              when (binding-hookp b)
-             collect `(defun ,(binding-hook-name b) ()
-                        (setf (,(binding-accessor b) (var :sketch))
-                              (var ,(binding-hook-name b)))))
+               when (binding-hook-name b)
+                 collect `(defun ,(binding-hook-name b) ()
+                            (setf (,(binding-accessor b) (var :sketch))
+                                  (var ',(binding-hook-var b))))
+               and when (binding-var-hook-name b)
+                 collect `(defun ,(binding-var-hook-name b) ()
+                            (setf (var ',(binding-hook-var b))
+                                  ,(binding-initform b))))
      (defmethod initialize-instance :after ((sketch ,sketch-name) &key &allow-other-keys)
        (with-environment (slot-value sketch '%env)
          ,@(loop for b in bindings
                  when (binding-hookp b)
-                 collect `(add-hook '(,@(binding-hook-vars b))
-                                    ',(binding-hook-name b)))))))
+                   when (binding-hook-name b)
+                     collect `(add-hook ',(binding-hook-var b)
+                                        ',(binding-hook-name b))
+                   and when (binding-var-hook-name b)
+                     collect `(add-hook '(,@(binding-hook-vars b))
+                                        ',(binding-var-hook-name b)))))))
 
 ;;; DEFSKETCH macro
 

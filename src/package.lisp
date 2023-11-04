@@ -147,6 +147,10 @@
            :remove-hook
            :define-hook
 
+           ;; Environment
+           :with-sketch-env
+           :with-last-sketch
+
            ;; Figures
            :deffigure
 

@@ -89,3 +89,11 @@
           (*vars* (env-vars *env*))
           (*hooks* (env-hooks *env*)))
      ,@body))
+
+(defmacro with-sketch-env (sketch &body body)
+  `(with-environment (slot-value ,sketch '%env)
+     ,@body))
+
+(defmacro with-last-sketch (&body body)
+  `(with-sketch-env (kit.sdl2:last-window)
+     ,@body))

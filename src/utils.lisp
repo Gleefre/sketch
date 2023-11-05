@@ -67,6 +67,11 @@
       (traverse tree))
     (nreverse list)))
 
+(defun remove-from-plist-if (test plist)
+  (loop for (key value) on plist by #'cddr
+        unless (funcall test key)
+        collect key and collect value))
+
 (defun object-to-keyword-hash (object)
   "Expensive operation that turns CL objects into keywords whose names
 are MD5 hashes of those objects, stringified. Uniqueness is not guaranteed,

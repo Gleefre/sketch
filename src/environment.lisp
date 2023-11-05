@@ -27,7 +27,8 @@
   (resources (make-hash-table))
   ;; Debugging
   (debug-key-pressed nil)
-  (red-screen nil))
+  (red-screen nil)
+  (initialized-p nil))
 
 (defparameter *env* nil)
 
@@ -51,6 +52,7 @@
           (env-white-color-vector env) #(255 255 255 255)
           (env-pen env) (make-default-pen)
           (env-font env) (make-default-font))
+    (setf (env-initialized-p env) t)
     (kit.gl.shader:use-program (env-programs env) :fill-shader)
     (kit.gl.shader:uniform-matrix
      (env-programs env) :view-m 4 (vector (env-view-matrix env)))))
@@ -63,7 +65,6 @@
       (sdl2::sdl-rc-error (e)
         (warn "VSYNC was not enabled; frame rate was not restricted to 60fps.~%  ~A" e)
         (sdl2-ffi.functions:sdl-clear-error)))
-    (setf (kit.sdl2:idle-render w) t)
     (gl:viewport 0 0 width height)
     (gl:enable :blend :line-smooth :polygon-smooth)
     (gl:blend-func :src-alpha :one-minus-src-alpha)

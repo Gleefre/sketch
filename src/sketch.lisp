@@ -230,14 +230,16 @@ used for drawing, 60fps.")
     (close-sketch instance)))
 
 (defmethod close-sketch ((instance sketch))
-  (setf (kit.sdl2:render-enabled (slot-value instance '%window)) nil)
+  (when (slot-value instance '%window)
+    (setf (kit.sdl2:render-enabled (slot-value instance '%window)) nil))
   (with-environment (slot-value instance '%env)
     (loop for resource being the hash-values of (env-resources *env*)
           do (free-resource resource)))
-  (kit.sdl2:close-window (slot-value instance '%window))
-  (when (and *build* (not (kit.sdl2:all-windows)))
-    (sdl2-ttf:quit)
-    (kit.sdl2:quit)))
+  (when (slot-value instance '%window)
+    (kit.sdl2:close-window (slot-value instance '%window))
+    (when (and *build* (not (kit.sdl2:all-windows)))
+      (sdl2-ttf:quit)
+      (kit.sdl2:quit))))
 
 ;;; DEFSKETCH bindings
 

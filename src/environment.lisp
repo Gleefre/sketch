@@ -67,12 +67,13 @@
         (warn "VSYNC was not enabled; frame rate was not restricted to 60fps.~%  ~A" e)
         (sdl2-ffi.functions:sdl-clear-error)))
     (setf (kit.sdl2:idle-render w) t)
-    (gl:enable :blend :line-smooth :polygon-smooth)
+    (gl:enable :blend :line-smooth ;:polygon-smooth
+               )
     (gl:blend-func :src-alpha :one-minus-src-alpha)
     (gl:hint :line-smooth-hint :nicest)
     (gl:hint :polygon-smooth-hint :nicest)
-    (gl:clear-color 0.0 1.0 0.0 1.0)
-    (gl:clear :color-buffer :depth-buffer)
+    ;(gl:clear-color 0.0 1.0 0.0 1.0)
+    ;(gl:clear :color-buffer :depth-buffer)
     (gl:flush)))
 
 (defun debug-mode-p ()

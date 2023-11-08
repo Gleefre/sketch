@@ -31,8 +31,7 @@
      ,@body))
 
 (defun start-draw ()
-  (%gl:bind-buffer :array-buffer (aref (slot-value (env-vao *env*) 'kit.gl.vao::vbos) 0))
-  (%gl:buffer-data :array-buffer *buffer-size* (cffi:null-pointer) :stream-draw)
+  (kit.gl.vao:vao-buffer-data (env-vao *env*) 0 *buffer-size* (cffi:null-pointer) :stream-draw)
   (setf (env-buffer-position *env*) 0)
   (kit.gl.vao:vao-bind (env-vao *env*)))
 

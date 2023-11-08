@@ -27,7 +27,7 @@
                  (%gl:map-buffer-range :array-buffer
                                        (* position *bytes-per-vertex*)
                                        (* length *bytes-per-vertex*)
-                                       '(:map-write :map-unsynchronized))))
+                                       +access-mode+)))
             (copy-buffer pointer buffer-pointer (* length *bytes-per-vertex*))
             (%gl:draw-arrays primitive position length)
             (setf position (+ position length))

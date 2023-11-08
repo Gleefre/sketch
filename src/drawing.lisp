@@ -82,7 +82,7 @@
     (let ((buffer-pointer (%gl:map-buffer-range :array-buffer
                                                 (* position *bytes-per-vertex*)
                                                 (* (length vertices) *bytes-per-vertex*)
-                                                #x22)))
+                                                '(:map-write :map-unsynchronized))))
       (fill-buffer buffer-pointer vertices color)
       (%gl:unmap-buffer :array-buffer)
       (%gl:draw-arrays primitive position (length vertices))

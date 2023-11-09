@@ -45,6 +45,15 @@
   (%gl:bind-buffer :array-buffer 0)
   (kit.gl.vao:vao-unbind))
 
+(defun map-vbo-range (length)
+  (symbol-macrolet ((position (env-buffer-position *env*)))
+    (when (> (* *bytes-per-vertex* (+ position length)) *buffer-size*)
+      (orphane-vbo))
+    (%gl:map-buffer-range :array-buffer
+                          (* position *bytes-per-vertex*)
+                          (* length *bytes-per-vertex*)
+                          +access-mode+)))
+
 (defun shader-color-texture-values (res)
   (typecase res
     (color (values (or (color-vector-255 res) (env-white-color-vector *env*))

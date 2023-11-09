@@ -99,12 +99,10 @@
   (kit.gl.shader:uniform-matrix (env-programs *env*) :model-m 4
                                 (vector (env-model-matrix *env*)))
   (gl:bind-texture :texture-2d texture)
-  (let* ((length (length vertices))
-         (buffer-pointer (map-vbo-range length)))
+  (with-vbo-range (buffer-pointer (length vertices))
     (fill-buffer buffer-pointer vertices color)
     (%gl:unmap-buffer :array-buffer)
-    (%gl:draw-arrays primitive (env-buffer-position *env*) (length vertices))
-    (incf (env-buffer-position *env*) length)))
+    (%gl:draw-arrays primitive (env-buffer-position *env*) (length vertices))))
 
 (defmethod push-vertices (vertices color texture primitive (draw-mode (eql :figure)))
   (let* ((vertices (mapcar (lambda (v) (transform-vertex v (env-model-matrix *env*)))

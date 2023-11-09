@@ -12,26 +12,19 @@
   ((draws :initarg :draws)))
 
 (defmethod draw ((figure figure) &key &allow-other-keys)
-  (symbol-macrolet ((position (env-buffer-position *env*)))
-    (with-slots (draws) figure
-      (kit.gl.shader:uniform-matrix (env-programs *env*) :model-m 4
-                                    (vector (env-model-matrix *env*)))
-      (gl:bind-texture :texture-2d (env-white-pixel-texture *env*))
-      (dolist (draw draws)
-        (let ((primitive (getf draw :primitive))
-              (pointer (getf draw :pointer))
-              (length (getf draw :length)))
-          (when (> (* *bytes-per-vertex* (+ position length)) *buffer-size*)
-            (start-draw))
-          (let ((buffer-pointer
-                 (%gl:map-buffer-range :array-buffer
-                                       (* position *bytes-per-vertex*)
-                                       (* length *bytes-per-vertex*)
-                                       +access-mode+)))
-            (copy-buffer pointer buffer-pointer (* length *bytes-per-vertex*))
-            (%gl:draw-arrays primitive position length)
-            (setf position (+ position length))
-            (%gl:unmap-buffer :array-buffer)))))))
+  (with-slots (draws) figure
+    (kit.gl.shader:uniform-matrix (env-programs *env*) :model-m 4
+                                  (vector (env-model-matrix *env*)))
+    (gl:bind-texture :texture-2d (env-white-pixel-texture *env*))
+    (dolist (draw draws)
+      (let ((primitive (getf draw :primitive))
+            (pointer (getf draw :pointer))
+            (length (getf draw :length)))
+        (let ((buffer-pointer (map-vbo-range length)))
+          (copy-buffer pointer buffer-pointer (* length *bytes-per-vertex*))
+          (%gl:draw-arrays primitive (env-buffer-position *env*) length)
+          (incf (env-buffer-position *env*) length)
+          (%gl:unmap-buffer :array-buffer))))))
 
 (defmacro deffigure (name &body body)
   `(let ((*draw-sequence* nil))

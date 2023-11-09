@@ -91,17 +91,12 @@
   (kit.gl.shader:uniform-matrix (env-programs *env*) :model-m 4
                                 (vector (env-model-matrix *env*)))
   (gl:bind-texture :texture-2d texture)
-  (symbol-macrolet ((position (env-buffer-position *env*)))
-    (when (> (* *bytes-per-vertex* (+ position (length vertices))) *buffer-size*)
-      (start-draw))
-    (let ((buffer-pointer (%gl:map-buffer-range :array-buffer
-                                                (* position *bytes-per-vertex*)
-                                                (* (length vertices) *bytes-per-vertex*)
-                                                +access-mode+)))
-      (fill-buffer buffer-pointer vertices color)
-      (%gl:unmap-buffer :array-buffer)
-      (%gl:draw-arrays primitive position (length vertices))
-      (setf position (+ position (length vertices))))))
+  (let* ((length (length vertices))
+         (buffer-pointer (map-vbo-range length)))
+    (fill-buffer buffer-pointer vertices color)
+    (%gl:unmap-buffer :array-buffer)
+    (%gl:draw-arrays primitive (env-buffer-position *env*) (length vertices))
+    (incf (env-buffer-position *env*) length)))
 
 (defmethod push-vertices (vertices color texture primitive (draw-mode (eql :figure)))
   (let* ((vertices (mapcar (lambda (v) (transform-vertex v (env-model-matrix *env*)))

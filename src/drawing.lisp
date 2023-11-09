@@ -33,9 +33,12 @@
   `(let ((*uv-rect* ,rect))
      ,@body))
 
-(defun start-draw ()
+(defun orphane-vbo ()
   (kit.gl.vao:vao-buffer-data (env-vao *env*) 0 *buffer-size* (cffi:null-pointer) :stream-draw)
-  (setf (env-buffer-position *env*) 0)
+  (setf (env-buffer-position *env*) 0))
+
+(defun start-draw ()
+  (orphane-vbo)
   (kit.gl.vao:vao-bind (env-vao *env*)))
 
 (defun end-draw ()

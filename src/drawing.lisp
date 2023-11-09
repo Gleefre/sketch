@@ -54,6 +54,14 @@
                           (* length *bytes-per-vertex*)
                           +access-mode+)))
 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defmacro with-vbo-range ((buffer-pointer-var length) &body body)
+    (let ((g!length (gensym)))
+      `(let* ((,g!length ,length)
+              (,buffer-pointer-var (map-vbo-range ,g!length)))
+         (prog1 (progn ,@body)
+           (incf (env-buffer-position *env*) ,g!length))))))
+
 (defun shader-color-texture-values (res)
   (typecase res
     (color (values (or (color-vector-255 res) (env-white-color-vector *env*))

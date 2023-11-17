@@ -71,6 +71,33 @@
   (declare (ignore win))
   (initialize-view-matrix instance))
 
+(define-sketch-writer copy-pixels
+  (declare (ignore win))
+  (with-slots ((env %env)) instance
+    (with-slots (fbo rbo) env
+      (when (and fbo (not value))
+        (gl:delete-framebuffers (vector fbo))
+        (gl:delete-renderbuffers (vector rbo))
+        (setf fbo nil rbo nil))
+      (when (and (not fbo) value)
+        (setf fbo (gl:gen-framebuffer)
+              rbo (gl:gen-renderbuffer))
+        (gl:bind-framebuffer :framebuffer fbo)
+        (gl:bind-renderbuffer :renderbuffer rbo)
+        (gl:renderbuffer-storage :renderbuffer
+                                 :rgba32f
+                                 (sketch-width instance)
+                                 (sketch-height instance))
+        (gl:framebuffer-renderbuffer :framebuffer :color-attachment0 :renderbuffer rbo)
+        (unless (= (cffi:foreign-enum-value '%gl:enum (gl:check-framebuffer-status :framebuffer))
+                   (cffi:foreign-enum-value '%gl:enum :framebuffer-complete))
+          (warn "Couldn't create FBO, COPY-PIXELS might not work.")
+          (gl:delete-framebuffers (vector fbo))
+          (gl:delete-renderbuffers (vector rbo))
+          (setf fbo nil rbo nil))
+        (gl:bind-framebuffer :framebuffer 0)
+        (gl:bind-renderbuffer :renderbuffer 0)))))
+
 ;;; Generic functions
 
 (defgeneric prepare (instance &key &allow-other-keys)
@@ -156,6 +183,8 @@
       (gl:viewport 0 0 width height)
       (setf %viewport-changed nil))
     (with-sketch (instance)
+      (when (and copy-pixels (env-fbo *env*))
+        (gl:bind-framebuffer :framebuffer (env-fbo *env*)))
       (unless copy-pixels
         (background (gray 0.4)))
       ;; Restart sketch on setup and when recovering from an error.
@@ -175,7 +204,18 @@
             (exit-debug-mode)
             (draw-window instance))
           (gl-catch (rgb 0.7 0 0)
-            (draw-window instance))))))
+            (draw-window instance)))
+      (when (and copy-pixels (env-fbo *env*))
+        (gl:bind-framebuffer :framebuffer 0)
+        (gl:clear-color 0.0 0.0 0.0 1.0)
+        (gl:clear :color-buffer)
+        (gl:bind-framebuffer :read-framebuffer (env-fbo *env*))
+        (gl:bind-framebuffer :draw-framebuffer 0)
+        (%gl:blit-framebuffer 0 0 width height
+                              0 0 width height
+                              '(:color-buffer-bit)
+                              :nearest)
+        (gl:bind-framebuffer :framebuffer 0)))))
 
 ;;; Support for resizable windows
 
@@ -197,7 +237,12 @@
 (defmethod close-window :before ((instance sketch))
   (with-environment (slot-value instance '%env)
     (loop for resource being the hash-values of (env-resources *env*)
-       do (free-resource resource))))
+       do (free-resource resource))
+    (when (env-fbo *env*)
+      (gl:delete-framebuffers (vector (env-fbo *env*)))
+      (gl:delete-renderbuffers (vector (env-rbo *env*)))
+      (setf (env-fbo *env*) nil
+            (env-rbo *env*) nil))))
 
 (defmethod close-window :after ((instance sketch))
   (when (and *build* (not (kit.sdl2:all-windows)))

@@ -8,6 +8,7 @@
                #:closer-mop
                #:glkit
                #:glu-tessellate
+               #:sb-cga
                #:mathkit
                #:md5
                #:sdl2

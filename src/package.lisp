@@ -2,33 +2,7 @@
 
 (defpackage #:sketch
   (:use #:cl)
-  ;; Sketch
-  (:export #:sketch
-           #:setup
-           #:draw
 
-           #:defsketch
-
-           #:sketch-title
-           #:sketch-width
-           #:sketch-height
-           #:sketch-fullscreen
-           #:sketch-resizable
-           #:sketch-copy-pixels
-           #:sketch-y-axis
-           #:sketch-close-on
-
-           #:title
-           #:width
-           #:height
-           #:fullscreen
-           #:resizable
-           #:copy-pixels
-           #:y-axis
-           #:close-on
-
-           #:*default-width*
-           #:*default-height*)
   ;; Math
   (:export #:clamp
            #:clamp-1
@@ -48,8 +22,19 @@
 
            #:radians
            #:degrees)
+
   ;; Utils
   (:export #:relative-path)
+
+  ;; Resources
+  (:export #:load-resource
+           #:image
+           #:image-width
+           #:image-height
+           #:crop
+           #:with-uv-rect
+           #:save-png)
+
   ;; Colors
   (:export #:color
            #:make-color
@@ -92,6 +77,15 @@
            #:+black+
            #:+gray+
            #:+indigo+)
+
+  ;; Channels
+  (:export #:register-input
+           #:in
+           #:out
+           #:define-channel-observer
+           #:define-named-channel-observer
+           #:reset-all-channels)
+
   ;; Pen
   (:export #:pen
            #:pen-stroke
@@ -105,6 +99,14 @@
            #:flip-pen
            #:with-pen
            #:background)
+
+  ;; Font
+  (:export #:make-font
+           #:with-font
+           #:set-font
+           #:text
+           #:text-line-image)
+
   ;; Shapes
   (:export #:point
            #:line
@@ -116,6 +118,7 @@
            #:circle
            #:polygon
            #:bezier)
+
   ;; Transforms
   (:export #:set-matrix
            #:push-matrix
@@ -129,45 +132,51 @@
            #:with-translate
            #:with-rotate
            #:with-scale)
+
   ;; Complex transforms
   (:export #:fit
            #:with-fit)
-  ;; Channels
-  (:export #:register-input
-           #:in
-           #:out
-           #:define-channel-observer
-           #:define-named-channel-observer
-           #:reset-all-channels)
-  ;; Figures
-  (:export #:deffigure)
+
+  ;; Sketch
+  (:export #:sketch
+           #:setup
+           #:draw
+
+           #:defsketch
+
+           #:sketch-title
+           #:sketch-width
+           #:sketch-height
+           #:sketch-fullscreen
+           #:sketch-resizable
+           #:sketch-copy-pixels
+           #:sketch-y-axis
+           #:sketch-close-on
+
+           #:title
+           #:width
+           #:height
+           #:fullscreen
+           #:resizable
+           #:copy-pixels
+           #:y-axis
+           #:close-on
+
+           #:*default-width*
+           #:*default-height*)
+
+  ;; Control flow
+  (:export #:start-loop
+           #:stop-loop)
+
   ;; Entities
   (:export #:defentity
            #:entity-width
            #:entity-height)
-  ;; Resources
-  (:export #:load-resource
-           #:image
-           #:image-width
-           #:image-height
-           #:crop
-           #:with-uv-rect
-           #:save-png)
-  ;; Font
-  (:export #:make-font
-           #:with-font
-           #:set-font
-           #:text
-           #:text-line-image)
-  ;; Canvas
-  (:export #:make-canvas
-           #:canvas-reset
-           #:canvas-paint
-           #:canvas-image
-           #:canvas-lock
-           #:canvas-unlock
-           #:canvas-width
-           #:canvas-height)
+
+  ;; Figures
+  (:export #:deffigure)
+
   ;; Controllers
   (:export #:on-click
            #:on-mouse-button
@@ -185,6 +194,13 @@
            #:on-leave
            #:on-text
            #:on-key)
-  ;; Control flow
-  (:export #:start-loop
-           #:stop-loop))
+
+  ;; Canvas
+  (:export #:make-canvas
+           #:canvas-reset
+           #:canvas-paint
+           #:canvas-image
+           #:canvas-lock
+           #:canvas-unlock
+           #:canvas-width
+           #:canvas-height))

@@ -33,7 +33,6 @@
                (:file "pen")
                (:file "font")
                (:file "geometry")
-               (:file "image")
                (:file "shapes")
                (:file "transforms")
                (:file "complex-transforms")
@@ -43,4 +42,5 @@
                (:file "entities")
                (:file "figures")
                (:file "controllers")
+               (:file "image")
                (:file "canvas")))

@@ -264,12 +264,12 @@
     (when (and (eql state :keyup) (eq (without-sdl2-scancode-prefix keysym) close-on))
       (kit.sdl2:close-window instance))))
 
-(defmethod close-window :before ((instance sketch-window))
+(defmethod kit.sdl2:close-window :before ((instance sketch-window))
   (with-environment (slot-value (%sketch instance) '%env)
     (loop for resource being the hash-values of (env-resources *env*)
        do (free-resource resource))))
 
-(defmethod close-window :after ((instance sketch))
+(defmethod kit.sdl2:close-window :after ((instance sketch))
   (when (and *build* (not (kit.sdl2:all-windows)))
     (sdl2-ttf:quit)
     (kit.sdl2:quit)))

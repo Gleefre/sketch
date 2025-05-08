@@ -2,14 +2,6 @@
 
 (uiop:define-package #:sketch
     (:use #:cl)
-  (:import-from :kit.sdl2
-                :mousebutton-event
-                :mousemotion-event
-                :mousewheel-event
-                :textinput-event
-                :keyboard-event
-                :other-event
-                :close-window)
   (:export :sketch
            :setup
            :draw

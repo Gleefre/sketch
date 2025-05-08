@@ -35,17 +35,19 @@
 ;; Trigonometry
 
 (defconstant +pi+ PI)
-(defconstant +two-pi+ (* PI 2))
+(defconstant +two-pi+ (* +pi+ 2))
 (defconstant +tau+ +two-pi+)
-(defconstant +half-pi+ (/ PI 2))
-(defconstant +quarter-pi+ (/ PI 4))
+(defconstant +half-pi+ (/ +pi+ 2))
+(defconstant +quarter-pi+ (/ +pi+ 4))
 (defconstant +epsilon+ single-float-epsilon)
 (defconstant +phi+ (/ (1+ (sqrt 5d0)) 2))
 (defconstant +golden-ratio+ +phi+)
 (defconstant +e+ (exp 1d0))
 
+(declaim (inline radians))
 (defun radians (deg)
-  (* PI (/ deg 180)))
+  (* +pi+ (/ deg 180)))
 
+(declaim (inline degrees))
 (defun degrees (rad)
-  (* 180 (/ rad PI)))
+  (* 180 (/ rad +pi+)))

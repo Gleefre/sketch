@@ -29,11 +29,6 @@
         do (push (ldb (byte bits pos) x) result)
         finally (return result)))
 
-(declaim (inline order-list))
-(defun order-list (order list)
-  (loop for o in order
-     collect (nth o list)))
-
 (declaim (inline mix-lists))
 (defun mix-lists (&rest lists)
   (apply #'append (apply #'mapcar #'list lists)))
@@ -66,16 +61,6 @@
                      (push subtree list)))))
       (traverse tree))
     (nreverse list)))
-
-(defun object-to-keyword-hash (object)
-  "Expensive operation that turns CL objects into keywords whose names
-are MD5 hashes of those objects, stringified. Uniqueness is not guaranteed,
-but may be considered unique for all practical purposes."
-  (alexandria:make-keyword
-   (apply #'alexandria:symbolicate
-          (coerce (map 'array (lambda (x) (format nil "~x" x))
-                       (md5:md5sum-string (write-to-string object)))
-                  'list))))
 
 (defun coerce-float (x)
   (coerce x 'single-float))

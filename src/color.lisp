@@ -160,9 +160,7 @@
 (defun lerp-color (start-color end-color amount &key (mode :hsb))
   (let ((a (clamp-1 amount)))
     (flet ((norm (field)
-             (normalize a 0.0 1.0
-                        :out-low (slot-value start-color field)
-                        :out-high (slot-value end-color field))))
+             (lerp a (slot-value start-color field) (slot-value end-color field))))
       (if (eq mode :hsb)
           (apply #'hsb (mapcar #'norm '(hue saturation brightness alpha)))
           (apply #'rgb (mapcar #'norm '(red green blue alpha)))))))
@@ -178,8 +176,8 @@
          (seq (md5:md5sum-sequence arr))
          (hash (loop for i across seq sum i)))
     (hsb-360 (mod (+ (* 144 (mod n 20)) (mod hash 60)) 360)
-             (alexandria:clamp (+ 25 (* 25 (mod hash 4)) (mod hash 25)) 0 100)
-             (alexandria:clamp (+ 25 (* 25 (mod n 4)) (mod hash 20)) 0 100)
+             (clamp (+ 25 (* 25 (mod hash 4)) (mod hash 25)) 0 100)
+             (clamp (+ 25 (* 25 (mod n 4)) (mod hash 20)) 0 100)
              (* 255 alpha))))
 
 ;;; Filters

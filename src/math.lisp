@@ -10,18 +10,27 @@
 
 ;; Calculation
 
-(defun clamp-1 (x)
-  (alexandria:clamp x 0.0 1.0))
+(declaim (inline clamp))
+(defun clamp (x low high)
+  (cond ((< x low) low)
+        ((> x high) high)
+        (t x)))
 
-(defun normalize (x low high &key (clamp t) (out-low 0.0) (out-high 1.0))
-  (let ((low (min low high))
-        (high (max low high))
-        (min-out-low (min out-low out-high))
-        (min-out-high (max out-low out-high)))
-    (let ((norm (+ out-low
-                   (* (- out-high out-low)
-                      (/ (- x low) (- high low))))))
-      (if clamp (alexandria:clamp norm min-out-low min-out-high) norm))))
+(declaim (inline clamp-1))
+(defun clamp-1 (x)
+  (clamp x 0.0 1.0))
+
+(declaim (inline lerp))
+(defun lerp (x low high)
+  (+ (* (- 1 x) low) (* x high)))
+
+(declaim (inline normalize))
+(defun normalize (x low high)
+  (/ (- x low) (- high low)))
+
+(declaim (inline rescale))
+(defun rescale (x low high out-low out-high)
+  (lerp (normalize x low high) out-low out-high))
 
 ;; Trigonometry
 

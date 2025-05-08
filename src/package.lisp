@@ -38,8 +38,11 @@
            :*default-height*
 
            ;; Math
+           :clamp
            :clamp-1
+           :lerp
            :normalize
+           :rescale
 
            :+pi+
            :+two-pi+

@@ -46,8 +46,8 @@
 
 (declaim (inline radians))
 (defun radians (deg)
-  (* +pi+ (/ deg 180)))
+  (* deg (/ +pi+ 180)))
 
 (declaim (inline degrees))
 (defun degrees (rad)
-  (* 180 (/ rad +pi+)))
+  (* rad (/ 180 +pi+)))
